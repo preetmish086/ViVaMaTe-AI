@@ -7,3 +7,7 @@ sentence-transformers
 python-dotenv
 numpy
 plotly
+streamlit-webrtc
+av
+opencv-python-headless
+mediapipe

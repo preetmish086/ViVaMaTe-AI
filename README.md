@@ -1,128 +1,242 @@
-# 🔬 AI Research Arena
+# 🎓 ViVaMaTe AI
 
-A Retrieval-Augmented Generation (RAG) system that enables intelligent question answering over research papers using multiple AI personas and explainable citations.
+An AI-powered Research Understanding, Presentation Preparation, and Mock Viva Assistant designed to help students, researchers, and professionals quickly understand research papers, generate presentations, practice viva questions, and improve communication skills.
 
 ---
 
 ## 🚀 Overview
 
-AI Research Arena is a document intelligence system that allows users to upload research papers (PDFs) and interact with them using a conversational AI assistant.
+VivaMate AI transforms complex research papers into an interactive learning experience.
 
-The system retrieves relevant sections from the document and generates grounded answers using a Large Language Model (LLM), ensuring responses are strictly based on the provided context.
+Instead of manually reading hundreds of pages and preparing presentations from scratch, users can:
+
+* Upload research papers
+* Chat with the paper using AI
+* Generate presentation summaries
+* Create slide-wise presentation content
+* Practice research viva questions
+* Receive performance reports and feedback
+
+The platform acts as a personal research mentor, presentation coach, and viva examiner in one place.
 
 ---
 
-## 🧠 Key Features
+## ✨ Key Features
 
-- 📄 PDF-based question answering
-- 🔎 Semantic search using FAISS vector database
-- 🧩 Chunk-based document understanding
-- 🤖 LLM-powered response generation (Groq / HuggingFace compatible)
-- 🎭 Multi-persona AI system:
-  - Professor (academic analysis)
-  - Student (simple explanations)
-  - Skeptic (critical review)
-  - Industry Expert (real-world perspective)
-  - Interviewer (technical questioning style)
-- 📚 Citation-based answers with source tracking
-- 💬 Chat-based interactive UI using Streamlit
+### 📚 Research Arena
+
+* Upload and index research papers
+* Semantic search using vector embeddings
+* Context-aware question answering
+* Research-focused conversational interface
+* Evidence-backed responses
+
+### 📊 Presentation Generator
+
+Automatically generates:
+
+* 2-minute presentation summary
+* 5-minute presentation summary
+* Slide-by-slide presentation structure
+* Speaker notes
+* Key takeaways
+* Likely viva questions
+
+### 🎓 Mock Viva
+
+Interactive viva simulation that:
+
+* Generates research-based questions
+* Evaluates user responses
+* Provides scores and feedback
+* Tracks viva performance history
+
+### 🎤 Presentation Practice Mode
+
+Practice presentations in a simulated environment.
+
+Features include:
+
+* Session tracking
+* Confidence scoring
+* Engagement scoring
+* Presentation performance metrics
+* Practice analytics
+
+### 📈 Final Performance Report
+
+Comprehensive report including:
+
+* Research Understanding Score
+* Viva Performance Score
+* Presentation Score
+* Overall Assessment
+* Strengths Analysis
+* Improvement Suggestions
+* Radar Chart Visualization
 
 ---
 
 ## 🏗️ System Architecture
 
-1. PDF Upload  
-2. Text Extraction  
-3. Chunking  
-4. Embedding Generation  
-5. FAISS Vector Store Creation  
-6. Semantic Retrieval (Top-K chunks)  
-7. LLM-based Answer Generation  
-8. Persona-based Response Formatting  
-9. Citation + Source Display  
+```text
+Research Paper
+      │
+      ▼
+PDF Processing
+      │
+      ▼
+Text Chunking
+      │
+      ▼
+Vector Embeddings
+      │
+      ▼
+FAISS Vector Store
+      │
+      ▼
+AI Retrieval System
+      │
+      ├── Research Chat
+      ├── Presentation Generator
+      ├── Mock Viva
+      └── Performance Evaluation
+```
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- Python
-- Streamlit
-- LangChain
-- FAISS
-- Hugging Face / Groq LLMs
-- Sentence Transformers
+### Frontend
+
+* Streamlit
+
+### AI & NLP
+
+* LangChain
+* OpenAI / LLM Integration
+* Embedding Models
+
+### Vector Database
+
+* FAISS
+
+### Document Processing
+
+* PyPDF
+* Text Chunking Pipeline
+
+### Data Visualization
+
+* Plotly
+
+### Computer Vision (Practice Mode)
+
+* OpenCV
+* MediaPipe
 
 ---
 
 ## 📂 Project Structure
-ai-research-arena/
+
+```text
+VivaMate-AI/
 │
 ├── app.py
-├── rag/
-│ ├── pdf_loader.py
-│ ├── text_splitter.py
-│ ├── vector_store.py
-│ ├── retriever.py
-│ ├── embeddings.py
+│
+├── modules/
+│   ├── research_chat.py
+│   ├── presentation_generator.py
+│   ├── mock_viva.py
+│   ├── presentation_practice.py
+│   └── final_report.py
 │
 ├── llm/
-│ ├── client.py
-│ ├── response_generator.py
-│ ├── prompt_templates.py
+│   └── client.py
 │
-├── utils/
-│ ├── memory.py
+├── vectorstore/
+│
+├── uploads/
 │
 ├── requirements.txt
-└── README.md  
-
-
----
-
-## 💡 Example Use Cases
-
-- Understanding research papers faster
-- Interview preparation using technical papers
-- Academic summarization
-- AI-powered study assistant
-- Research exploration tool
+│
+└── README.md
+```
 
 ---
 
-## ⚠️ Limitations
+## ⚙️ Installation
 
-- Performance depends on quality of embeddings and chunking
-- May struggle with highly scanned PDFs
-- Not a replacement for full human research understanding
+Clone the repository:
+
+```bash
+git clone <repository-url>
+cd VivaMate-AI
+```
+
+Create virtual environment:
+
+```bash
+python -m venv venv
+```
+
+Activate environment:
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### Linux / Mac
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run application:
+
+```bash
+streamlit run app.py
+```
 
 ---
 
-## 🔮 Future Improvements
+## 🎯 Use Cases
 
-- Multi-paper comparison
-- Better retrieval ranking (reranking models)
-- Highlight-based citations in UI
-- Cloud deployment
-- Fine-tuned domain-specific embeddings
-
----
-
-## 📸 UI Preview
-
-(Add screenshots here)
+* Research Paper Understanding
+* Academic Presentation Preparation
+* Thesis Defense Preparation
+* Conference Presentation Training
+* Mock Viva Practice
+* Research Learning Assistant
 
 ---
 
-## 🧑‍💻 Author
+## 🌟 Future Enhancements
 
-Built as a learning + portfolio project exploring:
-- RAG systems
-- LLM orchestration
-- Document intelligence
-- AI product design
+* Real-time Eye Contact Detection
+* Filler Word Analysis
+* Voice Confidence Analysis
+* Automatic PowerPoint Generation
+* Multi-Paper Knowledge Base
+* Team Collaboration Features
+* Presentation Recording & Playback
 
 ---
 
-## 📌 Status
+## 👨‍💻 Developed For
 
-🚧 Work in progress — actively improving retrieval quality and UI experience.
+AI-powered academic assistance and presentation preparation for students, researchers, educators, and professionals.
+
+---
+
+## 📄 License
+
+This project is intended for educational and research purposes.
