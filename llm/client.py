@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+_client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 MODEL = "llama-3.1-8b-instant" # free, fast, good quality
 # Alternative: "mixtral-8x7b-32768" — better reasoning, larger context

@@ -6,14 +6,24 @@ from rag.retriever import retrieve_chunks
 from rag.embeddings import load_embeddings
 from llm.response_generator import generate_response
 from utils.memory import add_turn, clear_history
+from utils.session_manager import initialize_session
+from modules.presentation_generator import(
+    show_presentation_generator
+)
+from modules.mock_viva import show_mock_viva
+from modules.presentation_practice import show_practice_mode
+from modules.final_report import show_final_report
+
 
 # ── Config ────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="AI Research Arena",
+    page_title="ViVaMaTe AI",
     page_icon="🔬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+initialize_session()
 
 PERSONAS = {
     "professor":        ("📚 Professor",        "Academic, rigorous, structured"),
@@ -282,7 +292,7 @@ with st.sidebar:
         <div class="sidebar-brand">
             <div class="logo">🔬</div>
             <div>
-                <div class="name">AI Research Arena</div>
+                <div class="name">ViVaMaTe AI</div>
                 <div class="sub">Paper Intelligence</div>
             </div>
         </div>
@@ -321,16 +331,25 @@ with st.sidebar:
 
 # ── PDF Processing ─────────────────────────────────────────────────────────────
 if uploaded and uploaded.name != st.session_state.paper_name:
+    # st.write(st.session_state.paper_context)
     with st.spinner("Reading, chunking, and indexing paper..."):
         try:
             text = extract_text_from_pdf(uploaded)
             chunks = split_text(text)
             index = create_vector_store(chunks, load_embeddings(), uploaded.name)
+            st.session_state.paper_context = {
+            "paper_name": uploaded.name,
+            "full_text": text,
+            "chunks": chunks,
+            "faiss_index": index
+}
             st.session_state.chunks = chunks
             st.session_state.faiss_index = index
             st.session_state.paper_name = uploaded.name
             st.session_state.chat_history = clear_history()
+
             st.success(f"✅ Indexed {len(chunks)} chunks.")
+
         except ValueError as e:
             st.error(str(e))
             st.stop()
@@ -339,7 +358,7 @@ if uploaded and uploaded.name != st.session_state.paper_name:
 st.markdown(f"""
 <div class="hero">
     <span class="badge">● Live · {active_label}</span>
-    <h1>AI Research Arena 🔬</h1>
+    <h1>ViVaMaTe AI 🔬</h1>
     <p>Chat with your research papers through five expert personas — grounded in retrieval, powered by your sources.</p>
 </div>
 """, unsafe_allow_html=True)
@@ -355,155 +374,162 @@ if not st.session_state.faiss_index:
     st.stop()
 
 # ── Tabs: Chat & Sources ──────────────────────────────────────────────────────
-chat_tab, sources_tab = st.tabs(["💬 Research Chat", "🧠 Indexed Knowledge Base"])
+chat_tab, presentation_tab, viva_tab, practice_tab, report_tab = st.tabs([
+    "💬 Research Chat",
+    # "📚 Knowledge Base",
+    "📊 Presentation Generator",
+    "🎓 Mock Viva",
+    "🎤 Practice Mode",
+    "📈 Final Report"
+])
 
 with chat_tab:
 
-# Render previous chat history
+    # Chat input
+
+    question = st.chat_input(
+        "Ask anything about the paper..."
+    )
+    
+    # Render previous chat history
     for msg in st.session_state.chat_history:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-# Auto-scroll
-st.markdown("""
-    <script>
-    function scrollToBottom() {
-        const main = window.parent.document.querySelector('.main');
+    # Auto-scroll
+    st.markdown("""
+        <script>
+        function scrollToBottom() {
+            const main = window.parent.document.querySelector('.main');
 
-        if (main) {
-            main.scrollTo({
-                top: main.scrollHeight,
-                behavior: 'smooth'
-            });
+            if (main) {
+                main.scrollTo({
+                    top: main.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
         }
-    }
 
-setTimeout(scrollToBottom, 200);
-</script>
-""", unsafe_allow_html=True)
+        setTimeout(scrollToBottom, 200);
+        </script>
+    """, unsafe_allow_html=True)
 
-# Chat input
-if question := st.chat_input("Ask anything about the paper..."):
+    if question :
 
-    # User message
-    with st.chat_message("user"):
-        st.markdown(question)
+        # User message
+        with st.chat_message("user"):
+            st.markdown(question)
 
-    # Retrieve chunks
-    chunks = retrieve_chunks(
-        st.session_state.faiss_index,
-        question
-    )
+        # Retrieve chunks
+        chunks = retrieve_chunks(
+            st.session_state.faiss_index,
+            question
+        )
 
-    # Assistant response
-    with st.chat_message("assistant"):
+        # Assistant response
+        with st.chat_message("assistant"):
 
-        with st.spinner(
-            f"Thinking as {PERSONAS[st.session_state.persona][0]}..."
-        ):
+            with st.spinner(
+                f"Thinking as {PERSONAS[st.session_state.persona][0]}..."
+            ):
 
-            answer = generate_response(
-                question=question,
-                chunks=chunks,
-                persona_key=st.session_state.persona,
-                chat_history=st.session_state.chat_history
+                answer = generate_response(
+                    question=question,
+                    chunks=chunks,
+                    persona_key=st.session_state.persona,
+                    chat_history=st.session_state.chat_history
+                )
+
+            st.markdown(answer)
+
+            # Retrieved sources
+            with st.expander(
+                f"📚 Evidence Used For This Answer ({len(chunks)} chunks)"
+            ):
+                for i, c in enumerate(chunks):
+                    source = c.metadata.get(
+                        "source",
+                        "Unknown PDF"
+                    )
+
+                    chunk_id = c.metadata.get(
+                        "chunk_id",
+                        "?"
+                    )
+
+                    with st.container(border=True):
+
+                        st.markdown(
+                            f"**📄 Source {i+1}**"
+                        )
+
+                        st.caption(
+                            f"{source} • Chunk {chunk_id}"
+                        )
+
+                        st.write(
+                            c.page_content[:400] + "..."
+                        )
+
+
+        # Save history
+        st.session_state.chat_history = add_turn(
+            st.session_state.chat_history,
+            "user",
+            question
+        )
+
+        st.session_state.chat_history = add_turn(
+            st.session_state.chat_history,
+            "assistant",
+            answer
+        )
+
+
+# with sources_tab:
+#     st.markdown("### 📚 Indexed Knowledge Base")
+#     st.caption(f"All {len(st.session_state.chunks)} chunks from **{st.session_state.paper_name}**")
+
+#     if not st.session_state.chunks:
+#         st.info("No chunks indexed yet.")
+#     else:
+#         preview_count = min(30, len(st.session_state.chunks))
+#         st.caption(f"Showing first {preview_count} chunks")
+#         for i, c in enumerate(st.session_state.chunks[:preview_count]):
+#             try:
+#                 content = c.page_content if hasattr(c, "page_content") else str(c)
+#                 source = c.metadata.get("source", st.session_state.paper_name) if hasattr(c, "metadata") else st.session_state.paper_name
+#                 chunk_id = c.metadata.get("chunk_id", i) if hasattr(c, "metadata") else i
+#             except Exception:
+#                 content = str(c); source = st.session_state.paper_name; chunk_id = i
+#             preview = content.replace("\n", " ").strip()[:320]
+#             st.markdown(f"""
+#                 <div class="src-card">
+#                     <div class="src-head">
+#                         <div class="src-title">🧩 Chunk {i+1}</div>
+#                         <div class="src-meta">{source} · id {chunk_id}</div>
+#                     </div>
+#                     <div class="src-body">{preview}…</div>
+#                 </div>
+#             """, unsafe_allow_html=True)
+    
+with presentation_tab:
+        show_presentation_generator()
+        with st.expander("📄 Paper Information"):
+            st.write(
+                st.session_state.paper_context["paper_name"]
             )
 
-        st.markdown(answer)
+            st.write(
+                f"Chunks Indexed: {len(st.session_state.paper_context['chunks'])}"
+            )
+        
 
-        # Retrieved sources
-        with st.expander(
-            f"🔎 Retrieved Context ({len(chunks)} chunks used for this answer)"
-        ):
+with viva_tab:
+        show_mock_viva()
 
-            for i, c in enumerate(chunks):
+with practice_tab:
+        show_practice_mode()
 
-                source = c.metadata.get(
-                    "source",
-                    "Unknown PDF"
-                )
-
-                short_source = (
-                    source[:40] + "..."
-                    if len(source) > 40
-                    else source
-                )
-
-                chunk_id = c.metadata.get(
-                    "chunk_id",
-                    "?"
-                )
-
-                preview = (
-                    c.page_content
-                    .replace("\n", " ")
-                    .strip()[:280]
-                )
-
-                html = f"""
-                <div class="src-card">
-
-                    <div class="src-head">
-
-                        <div class="src-title">
-                            📄 Source {i+1}
-                        </div>
-
-                        <div class="src-meta">
-                            {short_source} · chunk {chunk_id}
-                        </div>
-
-                    </div>
-
-                    <div class="src-body">
-                        {preview}…
-                    </div>
-
-                </div>
-                """
-
-                st.markdown(
-                    html,
-                    unsafe_allow_html=True
-                )
-
-    # Save history
-    st.session_state.chat_history = add_turn(
-        st.session_state.chat_history,
-        "user",
-        question
-    )
-
-    st.session_state.chat_history = add_turn(
-        st.session_state.chat_history,
-        "assistant",
-        answer
-    )
-
-
-with sources_tab:
-    st.markdown("### 📚 Indexed Knowledge Base")
-    st.caption(f"All {len(st.session_state.chunks)} chunks from **{st.session_state.paper_name}**")
-
-    if not st.session_state.chunks:
-        st.info("No chunks indexed yet.")
-    else:
-        preview_count = min(30, len(st.session_state.chunks))
-        st.caption(f"Showing first {preview_count} chunks")
-        for i, c in enumerate(st.session_state.chunks[:preview_count]):
-            try:
-                content = c.page_content if hasattr(c, "page_content") else str(c)
-                source = c.metadata.get("source", st.session_state.paper_name) if hasattr(c, "metadata") else st.session_state.paper_name
-                chunk_id = c.metadata.get("chunk_id", i) if hasattr(c, "metadata") else i
-            except Exception:
-                content = str(c); source = st.session_state.paper_name; chunk_id = i
-            preview = content.replace("\n", " ").strip()[:320]
-            st.markdown(f"""
-                <div class="src-card">
-                    <div class="src-head">
-                        <div class="src-title">🧩 Chunk {i+1}</div>
-                        <div class="src-meta">{source} · id {chunk_id}</div>
-                    </div>
-                    <div class="src-body">{preview}…</div>
-                </div>
-            """, unsafe_allow_html=True)
+with report_tab:
+        show_final_report()
