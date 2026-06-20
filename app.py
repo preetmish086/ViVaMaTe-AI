@@ -533,25 +533,139 @@ with practice_tab:
 
     st.markdown("## 🎤 VivaMate Practice Mode")
 
-    st.info(
-        "Launch the AI-powered presentation practice environment."
-    )
-
     st.link_button(
         "🚀 Open Practice Mode",
         "http://127.0.0.1:5000"
     )
 
-if os.path.exists("results.json"):
+    if st.button("Refresh"):
+        st.rerun()
 
-    try:
+    st.markdown("---")
 
-        with open("results.json","r") as f:
+    if os.path.exists("results.json"):
 
-            st.session_state.presentation_metrics = json.load(f)
+        try:
 
-    except:
-        pass
+            with open("results.json","r") as f:
+
+                practice_data = json.load(f)
+
+            st.subheader("📊 Last Practice Session")
+
+            c1, c2, c3, c4 = st.columns(4)
+
+            with c1:
+                st.metric(
+                    "Confidence",
+                    f"{practice_data.get('confidence_score',0)}%"
+                )
+
+            with c2:
+                st.metric(
+                    "Engagement",
+                    f"{practice_data.get('engagement_score',0)}%"
+                )
+
+            with c3:
+                st.metric(
+                    "Eye Contact",
+                    f"{practice_data.get('eye_contact_rate',0)}%"
+                )
+
+            with c4:
+                st.metric(
+                    "Face Detection",
+                    f"{practice_data.get('face_detection_rate',0)}%"
+                )
+
+            left,right = st.columns(2)
+
+            with left:
+
+                st.subheader("💪 Strengths")
+
+                strengths = practice_data.get(
+                    "strengths",
+                    []
+                )
+
+                if strengths:
+
+                    for item in strengths:
+                        st.success(item)
+
+                else:
+                    st.info(
+                        "No strengths available yet."
+                    )
+
+            with right:
+
+                st.subheader("📌 Improvements")
+
+                improvements = practice_data.get(
+                    "improvements",
+                    []
+                )
+
+                if improvements:
+
+                    for item in improvements:
+                        st.warning(item)
+
+                else:
+                    st.success(
+                        "No improvements required yet."
+                    )
+
+            transcript = practice_data.get(
+                "transcript",
+                ""
+            ).strip()
+
+            if len(transcript.split()) >= 15:
+
+                st.subheader("📝 Practice Transcript")
+
+                st.text_area(
+                    "",
+                    transcript,
+                    height=200
+                )   
+
+            fillers = practice_data.get(
+                "filler_words",
+                {}
+            )
+
+            used_fillers = {
+                k:v
+                for k,v in fillers.items()
+                if v > 0
+            }
+
+            st.subheader("🗣 Filler Words")
+
+            if used_fillers:
+
+                for word,count in used_fillers.items():
+
+                    st.write(
+                        f"**{word}** : {count}"
+                    )
+
+            else:
+
+                st.success(
+                    "No filler words detected."
+                )
+
+        except Exception as e:
+
+            st.error(
+                f"Unable to load practice data: {e}"
+            )
 
 with report_tab:
 

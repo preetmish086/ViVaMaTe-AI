@@ -61,7 +61,6 @@ def show_final_report():
         0
     )
 
-
     # ----------------------------
     # Research Understanding
     # ----------------------------
@@ -83,12 +82,22 @@ def show_final_report():
     # Overall
     # ----------------------------
 
-    overall_score = (
-    research_score * 0.35
-    + viva_score * 0.25
-    + presentation_score * 0.25
-    + communication_score * 0.15
-    )
+    if len(viva_history) == 0:
+
+        overall_score = (
+            research_score * 0.5
+            + presentation_score * 0.3
+            + communication_score * 0.2
+        )
+
+    else:
+
+        overall_score = (
+            research_score * 0.35
+            + viva_score * 0.25
+            + presentation_score * 0.25
+            + communication_score * 0.15
+        )
 
     # ----------------------------
     # Overall Assessment
@@ -127,15 +136,25 @@ def show_final_report():
         )
 
     with col2:
-        st.metric(
-            "Viva Score",
-            f"{viva_score}/100"
-        )
+
+        if len(viva_history) == 0:
+
+            st.metric(
+                "Viva Score",
+                "Not Attempted"
+            )
+
+        else:
+
+            st.metric(
+                "Viva Score",
+                f"{round(viva_score,1)}/100"
+            )
 
     with col3:
         st.metric(
             "Overall Score",
-            f"{overall_score}/100"
+            f"{round(overall_score,1)}/100"
         )
 
     with col4:
@@ -146,38 +165,46 @@ def show_final_report():
 
     st.markdown("---")
 
-    st.subheader("📊 Activity Summary")
+    # ----------------------------
+    # Radar Chart
+    # ----------------------------
 
-    if presentation_metrics.get("transcript"):
+    fig = go.Figure()
 
-        st.subheader("📝 Practice Transcript")
-
-        st.write(
-            presentation_metrics["transcript"]
+    fig.add_trace(
+        go.Scatterpolar(
+            r=[
+                research_score,
+                viva_score,
+                presentation_score,
+                communication_score
+            ],
+            theta=[
+                "Research",
+                "Viva",
+                "Presentation",
+                "Communication"
+            ],
+            fill="toself"
         )
+    )
 
-    st.subheader("🗣 Filler Words")
+    fig.update_layout(
+        height=400,
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 100]
+            )
+        ),
+        showlegend=False
+    )
 
-    for word,count in presentation_metrics.get(
-        "filler_words",
-        {}
-    ).items():
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
-        st.write(
-            f"**{word}** : {count}"
-        )
-
-    a1, a2 = st.columns(2)
-
-    with a1:
-        st.info(
-            f"🎓 Viva Questions Answered: {len(viva_history)}"
-        )
-
-    with a2:
-        st.info(
-            f"🎤 Confidence Score: {presentation_score}%"
-        )
 
     st.subheader(
     "📋 Performance Breakdown"
@@ -205,63 +232,8 @@ def show_final_report():
     )
 
     # ----------------------------
-    # Radar Chart
-    # ----------------------------
-
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatterpolar(
-            r=[
-                research_score,
-                viva_score,
-                presentation_score,
-                communication_score
-            ],
-            theta=[
-                "Research",
-                "Viva",
-                "Presentation",
-                "Communication"
-            ],
-            fill="toself"
-        )
-    )
-
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[0, 100]
-            )
-        ),
-        showlegend=False
-    )
-
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
-
-    # ----------------------------
     # Feedback
     # ----------------------------
 
-    st.subheader("💪 Strengths")
 
-    for item in presentation_metrics.get(
-        "strengths",
-        []
-    ):
-
-        st.success(item)
-
-
-    st.subheader("📌 Improvements")
-
-    for item in presentation_metrics.get(
-        "improvements",
-        []
-    ):
-
-        st.warning(item)
+    
