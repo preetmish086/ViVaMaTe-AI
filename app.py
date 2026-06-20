@@ -279,23 +279,6 @@ footer {visibility: hidden;}
     bottom: 1rem;
     z-index: 100;
     }
-               
-    .logo-box{
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 18px;
-        padding: 12px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
-            
-    .logo-img {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 18px;
-        padding: 12px;
-    }
                   
 </style>
 """, unsafe_allow_html=True)
