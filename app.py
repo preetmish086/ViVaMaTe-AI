@@ -299,10 +299,10 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section-label">📄 Document</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Document</div>', unsafe_allow_html=True)
     uploaded = st.file_uploader("Upload Research Paper (PDF)", type=["pdf"], label_visibility="collapsed")
 
-    st.markdown('<div class="section-label">🎭 AI Persona</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Choose AI Persona</div>', unsafe_allow_html=True)
     for key, (label, desc) in PERSONAS.items():
         if st.button(f"{label}", use_container_width=True,
                      type="primary" if st.session_state.persona == key else "secondary",
@@ -311,21 +311,21 @@ with st.sidebar:
             st.rerun()
 
     active_label, active_desc = PERSONAS[st.session_state.persona]
-    st.caption(f"✨ {active_desc}")
+    st.caption(f"Current Persona~ {active_desc}")
 
     st.markdown('<div class="section-label">⚙️ Session</div>', unsafe_allow_html=True)
-    if st.button("🗑️  Clear Chat", use_container_width=True):
+    if st.button("Clear Chat", use_container_width=True):
         st.session_state.chat_history = clear_history()
         st.rerun()
 
     if st.session_state.paper_name:
         with st.container(border=True):
-            st.markdown(f"**📄 Loaded Paper**")
+            st.markdown(f"**Loaded Paper**")
             st.caption(st.session_state.paper_name)
             st.markdown(
                 f'<div class="pill-row">'
                 f'<span class="pill"><span class="dot"></span>Indexed</span>'
-                f'<span class="pill">🧩 {len(st.session_state.chunks)} chunks</span>'
+                f'<span class="pill">{len(st.session_state.chunks)} chunks</span>'
                 f'</div>',
                 unsafe_allow_html=True
             )
@@ -356,11 +356,24 @@ if uploaded and uploaded.name != st.session_state.paper_name:
             st.stop()
 
 # ── Main UI ───────────────────────────────────────────────────────────────────
+import base64
+
+with open("static/logo.png", "rb") as f:
+    logo = base64.b64encode(f.read()).decode()
+
 st.markdown(f"""
-<div class="hero">
-    <span class="badge">● Live · {active_label}</span>
-    <h1>ViVaMaTe AI 🔬</h1>
-    <p>Chat with your research papers through five expert personas — grounded in retrieval, powered by your sources.</p>
+<div style="
+display:flex;
+align-items:center;
+gap:15px;
+">
+    <img src="data:image/png;base64,{logo}" width="70">
+    <h1 style="
+        margin:0;
+        font-size:3rem;
+    ">
+        ViVaMaTe AI
+    </h1>
 </div>
 """, unsafe_allow_html=True)
 
@@ -531,7 +544,7 @@ with viva_tab:
 
 with practice_tab:
 
-    st.markdown("## 🎤 VivaMate Practice Mode")
+    st.markdown("## 🎤 ViVaMaTe Practice Mode")
 
     st.link_button(
         "🚀 Open Practice Mode",
