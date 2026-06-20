@@ -1,242 +1,222 @@
-# 🎓 ViVaMaTe AI
+# 🔬 ViVaMaTe AI
 
-An AI-powered Research Understanding, Presentation Preparation, and Mock Viva Assistant designed to help students, researchers, and professionals quickly understand research papers, generate presentations, practice viva questions, and improve communication skills.
+### Your AI-Powered Research Companion for Understanding, Presenting, and Defending Research Papers
 
----
+ViVaMaTe AI is an intelligent research assistant that helps students, researchers, and professionals interact with research papers through Retrieval-Augmented Generation (RAG), AI-powered viva preparation, and real-time presentation analysis.
 
-## 🚀 Overview
+Instead of simply reading papers, users can:
 
-VivaMate AI transforms complex research papers into an interactive learning experience.
-
-Instead of manually reading hundreds of pages and preparing presentations from scratch, users can:
-
-* Upload research papers
-* Chat with the paper using AI
-* Generate presentation summaries
-* Create slide-wise presentation content
-* Practice research viva questions
-* Receive performance reports and feedback
-
-The platform acts as a personal research mentor, presentation coach, and viva examiner in one place.
+* Ask questions directly from uploaded PDFs
+* Switch between multiple AI expert personas
+* Practice research paper presentations
+* Receive AI-generated presentation feedback
+* Prepare for technical viva examinations
+* Improve communication, confidence, and engagement skills
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-### 📚 Research Arena
+### 📄 Research Paper Intelligence
 
-* Upload and index research papers
+* Upload any research paper in PDF format
+* Automatic text extraction and chunking
 * Semantic search using vector embeddings
-* Context-aware question answering
-* Research-focused conversational interface
-* Evidence-backed responses
+* Retrieval-Augmented Generation (RAG)
+* Source-grounded answers
 
-### 📊 Presentation Generator
+---
 
-Automatically generates:
+### 🎭 Multi-Persona AI Assistant
 
-* 2-minute presentation summary
-* 5-minute presentation summary
-* Slide-by-slide presentation structure
-* Speaker notes
-* Key takeaways
-* Likely viva questions
+Interact with your paper from different perspectives:
 
-### 🎓 Mock Viva
+| Persona            | Role                                      |
+| ------------------ | ----------------------------------------- |
+| 📚 Professor       | Academic and rigorous explanations        |
+| 🌱 Student         | Beginner-friendly understanding           |
+| 🔍 Skeptic         | Critical questioning and challenges       |
+| 💼 Industry Expert | Practical and deployment-focused insights |
+| 🎯 Interviewer     | Viva and interview-style questioning      |
 
-Interactive viva simulation that:
+---
 
-* Generates research-based questions
-* Evaluates user responses
-* Provides scores and feedback
-* Tracks viva performance history
+### 🎓 AI Viva Preparation
+
+Generate and answer viva-style questions based on your uploaded research paper.
+
+Features:
+
+* Context-aware questioning
+* Automated evaluation
+* Performance tracking
+* Research understanding assessment
+
+---
 
 ### 🎤 Presentation Practice Mode
 
-Practice presentations in a simulated environment.
+Dedicated Flask-powered presentation trainer that analyzes:
 
-Features include:
+* Eye Contact
+* Face Visibility
+* Filler Words
+* Speaking Confidence
+* Audience Engagement
 
-* Session tracking
-* Confidence scoring
-* Engagement scoring
-* Presentation performance metrics
-* Practice analytics
+---
 
-### 📈 Final Performance Report
+### 📊 Real-Time Presentation Analytics
+
+ViVaMaTe AI evaluates:
+
+* Confidence Score
+* Engagement Score
+* Eye Contact Rate
+* Face Detection Rate
+* Speaking Transcript
+* Strengths
+* Areas for Improvement
+
+---
+
+### 📈 Final Performance Dashboard
 
 Comprehensive report including:
 
 * Research Understanding Score
-* Viva Performance Score
-* Presentation Score
-* Overall Assessment
-* Strengths Analysis
-* Improvement Suggestions
+* Viva Performance
+* Presentation Performance
+* Communication Effectiveness
+* Overall Readiness Score
 * Radar Chart Visualization
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Architecture
 
-```text
-Research Paper
-      │
-      ▼
-PDF Processing
-      │
-      ▼
-Text Chunking
-      │
-      ▼
-Vector Embeddings
-      │
-      ▼
+PDF Upload
+↓
+Text Extraction (PyMuPDF)
+↓
+Chunking
+↓
+Embeddings (Sentence Transformers)
+↓
 FAISS Vector Store
-      │
-      ▼
-AI Retrieval System
-      │
-      ├── Research Chat
-      ├── Presentation Generator
-      ├── Mock Viva
-      └── Performance Evaluation
-```
+↓
+RAG Pipeline
+↓
+Groq LLM
+↓
+Streamlit Interface
+
+Presentation Mode
+↓
+Flask Backend
+↓
+MediaPipe Face Tracking
+↓
+Speech Recognition
+↓
+Analytics Engine
+↓
+Results Dashboard
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
 ### Frontend
 
 * Streamlit
+* HTML
+* CSS
+* JavaScript
+* Plotly
+
+### Backend
+
+* Python
+* Flask
 
 ### AI & NLP
 
+* Groq API
 * LangChain
-* OpenAI / LLM Integration
-* Embedding Models
-
-### Vector Database
-
+* Sentence Transformers
 * FAISS
+* Faster Whisper
 
-### Document Processing
+### Computer Vision
 
-* PyPDF
-* Text Chunking Pipeline
-
-### Data Visualization
-
-* Plotly
-
-### Computer Vision (Practice Mode)
-
-* OpenCV
 * MediaPipe
+* OpenCV
+
+### Research Pipeline
+
+* PyMuPDF
+* Semantic Retrieval
+* Retrieval-Augmented Generation (RAG)
 
 ---
 
-## 📂 Project Structure
+## 🚀 Running Locally
 
-```text
-VivaMate-AI/
-│
-├── app.py
-│
-├── modules/
-│   ├── research_chat.py
-│   ├── presentation_generator.py
-│   ├── mock_viva.py
-│   ├── presentation_practice.py
-│   └── final_report.py
-│
-├── llm/
-│   └── client.py
-│
-├── vectorstore/
-│
-├── uploads/
-│
-├── requirements.txt
-│
-└── README.md
-```
-
----
-
-## ⚙️ Installation
-
-Clone the repository:
+### Clone Repository
 
 ```bash
-git clone <repository-url>
-cd VivaMate-AI
+git clone <your-repo-url>
+cd ViVaMaTe-AI
 ```
 
-Create virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate environment:
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-### Linux / Mac
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies:
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run application:
+### Start Streamlit
 
 ```bash
 streamlit run app.py
 ```
 
----
+### Start Presentation Practice Server
 
-## 🎯 Use Cases
-
-* Research Paper Understanding
-* Academic Presentation Preparation
-* Thesis Defense Preparation
-* Conference Presentation Training
-* Mock Viva Practice
-* Research Learning Assistant
+```bash
+python flask_app.py
+```
 
 ---
 
-## 🌟 Future Enhancements
+## 📸 Screenshots
 
-* Real-time Eye Contact Detection
-* Filler Word Analysis
-* Voice Confidence Analysis
-* Automatic PowerPoint Generation
-* Multi-Paper Knowledge Base
-* Team Collaboration Features
-* Presentation Recording & Playback
+Add screenshots here:
 
----
-
-## 👨‍💻 Developed For
-
-AI-powered academic assistance and presentation preparation for students, researchers, educators, and professionals.
+* Home Page
+* Research Chat
+* Viva Mode
+* Practice Mode
+* Final Report
 
 ---
 
-## 📄 License
+## 🎯 Future Improvements
 
-This project is intended for educational and research purposes.
+* PPT Upload Support
+* Research Paper Summarization
+* Voice-based Viva
+* Multi-paper Knowledge Base
+* Citation Generation
+* Presentation Recording Export
+* Cloud Deployment
+
+---
+
+## 👨‍💻 Developed By
+
+Madhu
+B.Tech CSE, IIIT Bhubaneswar
+
+Built to make research papers easier to understand, explain, present, and defend.
