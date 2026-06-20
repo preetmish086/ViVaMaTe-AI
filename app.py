@@ -11,9 +11,10 @@ from modules.presentation_generator import(
     show_presentation_generator
 )
 from modules.mock_viva import show_mock_viva
-from modules.presentation_practice import show_practice_mode
+#from archive.presentation_practice import show_practice_mode
 from modules.final_report import show_final_report
-
+import json
+import os
 
 # ── Config ────────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -529,7 +530,29 @@ with viva_tab:
         show_mock_viva()
 
 with practice_tab:
-        show_practice_mode()
+
+    st.markdown("## 🎤 VivaMate Practice Mode")
+
+    st.info(
+        "Launch the AI-powered presentation practice environment."
+    )
+
+    st.link_button(
+        "🚀 Open Practice Mode",
+        "http://127.0.0.1:5000"
+    )
+
+if os.path.exists("results.json"):
+
+    try:
+
+        with open("results.json","r") as f:
+
+            st.session_state.presentation_metrics = json.load(f)
+
+    except:
+        pass
 
 with report_tab:
-        show_final_report()
+
+    show_final_report()

@@ -1,9 +1,13 @@
 import streamlit as st
 import plotly.graph_objects as go
 import re
-
+import json
+import os
 
 def show_final_report():
+
+    if st.button("🔄 Refresh Report"):
+        st.rerun()
 
     st.header("📈 Final Performance Report")
 
@@ -14,10 +18,13 @@ def show_final_report():
         )
 
 
-    presentation_metrics = st.session_state.get(
-        "presentation_metrics",
-        {}
-    )   
+    presentation_metrics = {}
+
+    if os.path.exists("results.json"):
+
+        with open("results.json","r") as f:
+
+            presentation_metrics = json.load(f)           
 
     viva_score = 0
     if viva_history:
@@ -44,21 +51,16 @@ def show_final_report():
                 / len(scores)
             ) * 10
 
-        
 
     # ----------------------------
     # Presentation Score
     # ----------------------------
 
-    duration = presentation_metrics.get(
-        "duration",
+    presentation_score = presentation_metrics.get(
+        "confidence_score",
         0
     )
 
-    presentation_score = min(
-        100,
-        duration
-    )
 
     # ----------------------------
     # Research Understanding
@@ -72,20 +74,20 @@ def show_final_report():
     # Communication
     # ----------------------------
 
-    communication_score = 75
+    communication_score = presentation_metrics.get(
+        "engagement_score",
+        75
+    )
 
     # ----------------------------
     # Overall
     # ----------------------------
 
-    overall_score = round(
-        (
-            research_score * 0.4
-            + viva_score * 0.3
-            + presentation_score * 0.2
-            + communication_score * 0.1
-        ),
-        2
+    overall_score = (
+    research_score * 0.35
+    + viva_score * 0.25
+    + presentation_score * 0.25
+    + communication_score * 0.15
     )
 
     # ----------------------------
@@ -146,6 +148,25 @@ def show_final_report():
 
     st.subheader("📊 Activity Summary")
 
+    if presentation_metrics.get("transcript"):
+
+        st.subheader("📝 Practice Transcript")
+
+        st.write(
+            presentation_metrics["transcript"]
+        )
+
+    st.subheader("🗣 Filler Words")
+
+    for word,count in presentation_metrics.get(
+        "filler_words",
+        {}
+    ).items():
+
+        st.write(
+            f"**{word}** : {count}"
+        )
+
     a1, a2 = st.columns(2)
 
     with a1:
@@ -155,7 +176,7 @@ def show_final_report():
 
     with a2:
         st.info(
-            f"🎤 Practice Duration: {round(duration,1)} sec"
+            f"🎤 Confidence Score: {presentation_score}%"
         )
 
     st.subheader(
@@ -228,44 +249,19 @@ def show_final_report():
 
     st.subheader("💪 Strengths")
 
-    strengths = []
+    for item in presentation_metrics.get(
+        "strengths",
+        []
+    ):
 
-    if research_score > 80:
-        strengths.append(
-            "Strong understanding of the research paper and core concepts."
-        )
+        st.success(item)
 
-    if viva_score > 50:
-        strengths.append(
-            "Demonstrated good performance during viva sessions."
-        )
-
-    if presentation_score > 50:
-        strengths.append(
-            "Maintained consistent presentation practice."
-        )
-
-    for s in strengths:
-        st.success(s)
 
     st.subheader("📌 Improvements")
 
-    improvements = []
+    for item in presentation_metrics.get(
+        "improvements",
+        []
+    ):
 
-    if viva_score < 70:
-        improvements.append(
-            "Attempt additional viva sessions to improve subject mastery."
-        )
-
-    if presentation_score < 70:
-        improvements.append(
-            "Increase presentation practice duration for stronger delivery."
-        )
-
-    if not improvements:
-        improvements.append(
-            "Excellent overall performance."
-        )
-
-    for i in improvements:
-        st.warning(i)
+        st.warning(item)

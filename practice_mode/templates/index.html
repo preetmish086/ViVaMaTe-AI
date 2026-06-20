@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VivaMate Practice Mode</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#0f172a;
+            color:white;
+            text-align:center;
+            padding:50px;
+        }
+
+        button{
+            padding:15px 30px;
+            font-size:18px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            margin:10px;
+        }
+
+                .card{
+            background:#1e293b;
+            padding:20px;
+            margin-top:15px;
+            border-radius:12px;
+        }
+
+        .score-card{
+
+            background:#1e293b;
+            padding:20px;
+            margin-top:20px;
+            border-radius:12px;
+            text-align:center;
+
+        }
+
+        .score{
+
+            width:120px;
+            height:120px;
+
+            border-radius:50%;
+
+            background:#2563eb;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            margin:auto;
+
+            font-size:32px;
+            font-weight:bold;
+
+        }
+
+        .start{
+            background:#10b981;
+            color:white;
+        }
+
+        .stop{
+            background:#ef4444;
+            color:white;
+        }
+
+        #results{
+            margin-top:40px;
+            max-width:900px;
+            margin:auto;
+        }
+
+        .score-green{
+            background:#22c55e;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>🎤 VivaMate Practice Mode</h1>
+
+<button class="start" onclick="startPractice()">
+Start Practice
+</button>
+
+<button class="stop" onclick="stopPractice()">
+Stop Practice
+</button>
+
+<div id="results"></div>
+
+<script>
+
+async function startPractice(){
+
+    await fetch("/start");
+
+    document.getElementById("results").innerHTML =
+`
+    <div class="card">
+        <h2>🎤 Recording...</h2>
+        <p>Speak normally and click Stop when finished.</p>
+    </div>
+    `;
+}
+
+async function stopPractice(){
+
+    const response = await fetch("/stop");
+
+    const data = await response.json();
+
+    const confidenceColor =
+        data.confidence_score >= 85
+        ? "score-green"
+        : "";
+
+    document.getElementById("results").innerHTML = `
+
+        <div class="score-card">
+
+            <h2>Confidence Score</h2>
+
+            <div class="score ${confidenceColor}">
+                ${data.confidence_score}
+            </div>
+
+        </div>
+
+        <div class="card">
+            <h2>Engagement Score</h2>
+            <h1>${data.engagement_score}</h1>
+        </div>
+
+        <div class="card">
+            <h2>Eye Contact</h2>
+            <h1>${data.eye_contact_rate}%</h1>
+        </div>
+
+        <div class="card">
+            <h2>Strengths</h2>
+            <ul>
+                ${data.strengths.map(x=>`<li>${x}</li>`).join("")}
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Areas To Improve</h2>
+            <ul>
+                ${data.improvements.map(x=>`<li>${x}</li>`).join("")}
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Transcript</h2>
+            <p>${data.transcript}</p>
+        </div>
+
+    `;
+}
+
+</script>
+
+</body>
+</html>

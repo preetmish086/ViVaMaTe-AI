@@ -1,12 +1,12 @@
 # environment
 .env
-venv/
+venv310/
 
 # python cache
 __pycache__/
 *.pyc
 
-# vector/db artifacts (optional but recommended)
+# vector/db artifacts
 *.faiss
 *.pkl
 
@@ -15,3 +15,5 @@ data/uploads/
 
 # IDE
 .vscode/
+
+results.json
