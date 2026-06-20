@@ -53,8 +53,14 @@ st.markdown("""
         color: #e6e8ef;
     }
     [data-testid="stHeader"] { background: transparent !important; }
+
 #MainMenu {visibility: hidden;}
-footer {visibility: hidden;}    .block-container {padding-top: 2rem; padding-bottom: 6rem; max-width: 1200px;}
+footer {visibility: hidden;}
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 6rem;
+    max-width: 1200px;
+}
 
     /* ---------- Typography ---------- */
     h1, h2, h3, h4 { color: #f4f5fb !important; letter-spacing: -0.02em; }
@@ -272,7 +278,25 @@ footer {visibility: hidden;}    .block-container {padding-top: 2rem; padding-bot
     position: sticky;
     bottom: 1rem;
     z-index: 100;
-}      
+    }
+               
+    .logo-box{
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 12px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+            
+    .logo-img {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 12px;
+    }
+                  
 </style>
 """, unsafe_allow_html=True)
 
@@ -356,6 +380,7 @@ if uploaded and uploaded.name != st.session_state.paper_name:
             st.stop()
 
 # ── Main UI ───────────────────────────────────────────────────────────────────
+
 import base64
 
 with open("static/logo.png", "rb") as f:
@@ -374,8 +399,14 @@ gap:15px;
     ">
         ViVaMaTe AI
     </h1>
+
 </div>
 """, unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 8])
+
+with col2:
+    st.caption("Research Paper Intelligence & Presentation Coach")
 
 if not st.session_state.faiss_index:
     st.markdown("""
