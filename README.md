@@ -1,222 +1,384 @@
-# 🔬 ViVaMaTe AI
+# ViVaMaTe AI
 
-### Your AI-Powered Research Companion for Understanding, Presenting, and Defending Research Papers
+> An AI-powered research paper companion for understanding, presenting, practicing, and defending academic work.
 
-ViVaMaTe AI is an intelligent research assistant that helps students, researchers, and professionals interact with research papers through Retrieval-Augmented Generation (RAG), AI-powered viva preparation, and real-time presentation analysis.
+ViVaMaTe AI turns a research paper into an interactive preparation workspace. Upload a PDF, ask grounded questions about the paper, switch between expert personas, generate presentation material, practice viva answers, analyze delivery quality, and review your readiness in a final performance dashboard.
 
-Instead of simply reading papers, users can:
-
-* Ask questions directly from uploaded PDFs
-* Switch between multiple AI expert personas
-* Practice research paper presentations
-* Receive AI-generated presentation feedback
-* Prepare for technical viva examinations
-* Improve communication, confidence, and engagement skills
+The project combines a Streamlit research assistant with Flask-based practice surfaces for presentation delivery and voice viva preparation.
 
 ---
 
-## ✨ Features
+## Highlights
 
-### 📄 Research Paper Intelligence
-
-* Upload any research paper in PDF format
-* Automatic text extraction and chunking
-* Semantic search using vector embeddings
-* Retrieval-Augmented Generation (RAG)
-* Source-grounded answers
-
----
-
-### 🎭 Multi-Persona AI Assistant
-
-Interact with your paper from different perspectives:
-
-| Persona            | Role                                      |
-| ------------------ | ----------------------------------------- |
-| 📚 Professor       | Academic and rigorous explanations        |
-| 🌱 Student         | Beginner-friendly understanding           |
-| 🔍 Skeptic         | Critical questioning and challenges       |
-| 💼 Industry Expert | Practical and deployment-focused insights |
-| 🎯 Interviewer     | Viva and interview-style questioning      |
+- PDF-based research paper ingestion and question answering
+- Retrieval-Augmented Generation using FAISS and sentence-transformer embeddings
+- Five AI personas for different review styles
+- AI-generated summaries, slide outlines, takeaways, and viva questions
+- Mock viva question generation and answer evaluation
+- Camera and microphone based presentation practice mode
+- Speech transcription with Faster Whisper
+- Filler word, fluency, eye contact, face visibility, confidence, and engagement analysis
+- Final readiness report with weighted scores and a radar chart
+- Separate spoken viva practice server
 
 ---
 
-### 🎓 AI Viva Preparation
+## Core Features
 
-Generate and answer viva-style questions based on your uploaded research paper.
+### 1. Research Paper Intelligence
 
-Features:
+Upload a research paper as a PDF and let the app build a searchable knowledge base.
 
-* Context-aware questioning
-* Automated evaluation
-* Performance tracking
-* Research understanding assessment
+What happens after upload:
 
----
+1. Text is extracted with PyMuPDF.
+2. The paper is split into overlapping chunks.
+3. Chunks are embedded with `sentence-transformers/all-MiniLM-L6-v2`.
+4. A FAISS vector store is created in memory.
+5. User questions retrieve the top matching chunks.
+6. Groq-hosted LLM responses are generated from the retrieved context.
 
-### 🎤 Presentation Practice Mode
+The chat is intentionally source-grounded. Answers are built from the retrieved paper chunks and include an expandable evidence panel showing the exact chunks used.
 
-Dedicated Flask-powered presentation trainer that analyzes:
+### 2. Multi-Persona Research Chat
 
-* Eye Contact
-* Face Visibility
-* Filler Words
-* Speaking Confidence
-* Audience Engagement
+The same paper can be explored from five perspectives:
 
----
+| Persona | Focus |
+| --- | --- |
+| Professor | Formal academic explanation, methodology, findings, limitations |
+| Student | Beginner-friendly explanations and simpler wording |
+| Skeptic | Critical review, assumptions, gaps, and probing questions |
+| Industry Expert | Practical feasibility, deployment, cost, and production readiness |
+| Interviewer | Technical interview-style explanation and follow-up questions |
 
-### 📊 Real-Time Presentation Analytics
+Chat history is preserved during the session, and the LLM receives the latest conversation turns for continuity.
 
-ViVaMaTe AI evaluates:
+### 3. Presentation Generator
 
-* Confidence Score
-* Engagement Score
-* Eye Contact Rate
-* Face Detection Rate
-* Speaking Transcript
-* Strengths
-* Areas for Improvement
+The presentation generator converts the uploaded paper into practical presentation prep material.
 
----
+It can generate:
 
-### 📈 Final Performance Dashboard
+- A two-minute research summary
+- A five-minute research summary
+- A slide-by-slide deck outline
+- Speaker notes for each slide
+- Key takeaways
+- Ten likely viva questions
 
-Comprehensive report including:
+The slide outline supports a configurable slide count from 5 to 10 slides.
 
-* Research Understanding Score
-* Viva Performance
-* Presentation Performance
-* Communication Effectiveness
-* Overall Readiness Score
-* Radar Chart Visualization
+### 4. Mock Viva
 
----
+The mock viva module creates realistic viva questions from the uploaded paper.
 
-## 🏗️ Architecture
+Capabilities:
 
-PDF Upload
-↓
-Text Extraction (PyMuPDF)
-↓
-Chunking
-↓
-Embeddings (Sentence Transformers)
-↓
-FAISS Vector Store
-↓
-RAG Pipeline
-↓
-Groq LLM
-↓
-Streamlit Interface
+- Choose an examiner persona
+- Generate one paper-specific viva question
+- Type an answer transcript
+- Evaluate the answer using an academic scoring prompt
+- Receive a score out of 10, strengths, weaknesses, and a better answer
+- Review previous viva attempts in the current session
 
-Presentation Mode
-↓
-Flask Backend
-↓
-MediaPipe Face Tracking
-↓
-Speech Recognition
-↓
-Analytics Engine
-↓
-Results Dashboard
+### 5. Presentation Practice Mode
 
----
+The practice mode runs as a standalone Flask app and is linked from the Streamlit interface.
 
-## 🛠️ Tech Stack
+It records webcam and microphone input, then calculates:
 
-### Frontend
+- Eye contact rate
+- Face detection rate
+- Confidence score
+- Engagement score
+- Filler word usage
+- Speech transcript
+- Strengths
+- Areas for improvement
 
-* Streamlit
-* HTML
-* CSS
-* JavaScript
-* Plotly
+Video analysis uses OpenCV and MediaPipe Face Mesh. Speech analysis uses SoundDevice for recording and Faster Whisper for transcription.
 
-### Backend
+### 6. Voice Mock Viva
 
-* Python
-* Flask
+The voice viva app is a second Flask surface for spoken viva practice.
 
-### AI & NLP
+It can:
 
-* Groq API
-* LangChain
-* Sentence Transformers
-* FAISS
-* Faster Whisper
+- Generate a viva question from `paper_context.json`
+- Record a spoken answer
+- Transcribe the answer
+- Count filler words
+- Calculate speaking fluency and words per minute
+- Evaluate the answer with the LLM
 
-### Computer Vision
+This server is separate from the main Streamlit app and runs on port `5001`.
 
-* MediaPipe
-* OpenCV
+### 7. Final Performance Report
 
-### Research Pipeline
+The final report brings together research, viva, and presentation metrics.
 
-* PyMuPDF
-* Semantic Retrieval
-* Retrieval-Augmented Generation (RAG)
+It includes:
+
+- Research understanding score
+- Viva score
+- Presentation score
+- Communication score
+- Overall readiness score
+- Readiness label
+- Radar chart across Research, Viva, Presentation, and Communication
+- Progress breakdown for each major category
+
+The report reads presentation metrics from `results.json`, which is produced by the practice mode server.
 
 ---
 
-## 🚀 Running Locally
+## Tech Stack
 
-### Clone Repository
+| Layer | Tools |
+| --- | --- |
+| Main UI | Streamlit |
+| Practice UIs | Flask, HTML, CSS, JavaScript |
+| LLM | Groq API, `llama-3.1-8b-instant` |
+| RAG | LangChain, FAISS, Hugging Face embeddings |
+| PDF Processing | PyMuPDF |
+| Embeddings | Sentence Transformers |
+| Speech | SoundDevice, Faster Whisper, SciPy |
+| Vision | OpenCV, MediaPipe |
+| Charts | Plotly |
+| Utilities | python-dotenv, NumPy |
 
-```bash
-git clone <your-repo-url>
-cd ViVaMaTe-AI
+---
+
+## Project Structure
+
+```text
+ResearchPresentationTrainer/
+|-- app.py                         # Main Streamlit application
+|-- requirements.txt               # Python dependencies
+|-- README.md                      # Project documentation
+|-- agents/                        # Persona wrappers
+|-- llm/                           # Groq client, prompt templates, response generation
+|-- rag/                           # PDF loading, splitting, embeddings, FAISS retrieval
+|-- modules/                       # Streamlit feature modules
+|   |-- presentation_generator.py
+|   |-- mock_viva.py
+|   |-- final_report.py
+|   `-- viva_audio.py
+|-- practice_mode/                 # Flask presentation practice server
+|   |-- pracapp.py
+|   |-- video_analyzer.py
+|   |-- speech_analyzer.py
+|   |-- metrics.py
+|   `-- templates/
+|-- voice_viva/                    # Flask voice viva server
+|   |-- vivapp.py
+|   |-- viva_speech_analyzer.py
+|   `-- templates/
+|-- static/                        # Logo and static assets
+|-- utils/                         # Session and memory helpers
+`-- data/                          # Runtime uploads/results folders
 ```
 
-### Install Dependencies
+---
+
+## How It Works
+
+```text
+PDF Upload
+   |
+   v
+PyMuPDF text extraction
+   |
+   v
+Recursive text chunking
+   |
+   v
+Sentence-transformer embeddings
+   |
+   v
+FAISS vector store
+   |
+   v
+Top-k semantic retrieval
+   |
+   v
+Persona-aware Groq response
+   |
+   v
+Streamlit chat, presentation tools, viva, and report
+```
+
+Presentation practice flow:
+
+```text
+Start Practice
+   |
+   +--> Webcam capture -> MediaPipe Face Mesh -> eye contact / face visibility
+   |
+   +--> Microphone recording -> Faster Whisper -> transcript / fillers / fluency
+   |
+   v
+Metric calculation
+   |
+   v
+results.json
+   |
+   v
+Streamlit practice summary and final report
+```
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Python 3.10 recommended
+- Webcam and microphone for practice features
+- Groq API key
+
+### 1. Create and activate a virtual environment
+
+```bash
+python -m venv venv310
+```
+
+On Windows PowerShell:
+
+```powershell
+.\venv310\Scripts\Activate.ps1
+```
+
+On macOS/Linux:
+
+```bash
+source venv310/bin/activate
+```
+
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Start Streamlit
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+---
+
+## Running the App
+
+### Main Streamlit app
 
 ```bash
 streamlit run app.py
 ```
 
-### Start Presentation Practice Server
+Open the local Streamlit URL shown in the terminal, upload a PDF, and use the tabs inside the app.
+
+### Presentation practice server
+
+Run this in a second terminal:
 
 ```bash
-python flask_app.py
+python practice_mode/pracapp.py
 ```
 
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
+
+The Streamlit app also includes a button that links to this address from the Practice Mode tab.
+
+### Voice viva server
+
+Run this in another terminal after a paper has been uploaded in the main app:
+
+```bash
+python voice_viva/vivapp.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5001
+```
+
+Voice viva reads `paper_context.json`, which is created when the main app processes an uploaded paper.
+
 ---
 
-## 📸 Screenshots
+## Runtime Files
 
-Add screenshots here:
+The app may create or update these local files while running:
 
-* Home Page
-* Research Chat
-* Viva Mode
-* Practice Mode
-* Final Report
+| File | Purpose |
+| --- | --- |
+| `paper_context.json` | Stores the latest uploaded paper name and extracted text |
+| `results.json` | Stores the latest presentation practice metrics |
+| `practice_audio.wav` | Temporary microphone recording for speech analysis |
+| `data/uploads/` | Local uploaded documents, if used |
 
----
-
-## 🎯 Future Improvements
-
-* PPT Upload Support
-* Research Paper Summarization
-* Voice-based Viva
-* Multi-paper Knowledge Base
-* Citation Generation
-* Presentation Recording Export
-* Cloud Deployment
+These files are runtime artifacts and do not need to be committed.
 
 ---
 
-## 👨‍💻 Developed By
+## Main Modules
 
-Madhu
-B.Tech CSE, IIIT Bhubaneswar
+| Module | Responsibility |
+| --- | --- |
+| `app.py` | Main Streamlit shell, sidebar, PDF processing, tabs, and practice summary |
+| `rag/pdf_loader.py` | Extracts text from uploaded PDFs |
+| `rag/text_splitter.py` | Splits extracted text into overlapping chunks |
+| `rag/embeddings.py` | Loads Hugging Face embedding model |
+| `rag/vector_store.py` | Builds FAISS vector store with source metadata |
+| `rag/retriever.py` | Retrieves top matching chunks for a query |
+| `llm/client.py` | Wraps Groq chat completion calls |
+| `llm/prompt_templates.py` | Defines personas and RAG grounding rules |
+| `modules/presentation_generator.py` | Generates summaries, outlines, takeaways, and viva questions |
+| `modules/mock_viva.py` | Generates and evaluates typed viva attempts |
+| `modules/final_report.py` | Combines viva and practice metrics into readiness report |
+| `practice_mode/video_analyzer.py` | Tracks face visibility and eye contact |
+| `practice_mode/speech_analyzer.py` | Records audio, transcribes speech, detects fillers |
+| `practice_mode/metrics.py` | Calculates confidence, engagement, strengths, and improvements |
+| `voice_viva/vivapp.py` | Runs the spoken viva Flask app |
 
-Built to make research papers easier to understand, explain, present, and defend.
+---
+
+## Current Limitations
+
+- The FAISS index is in memory and resets when the Streamlit session restarts.
+- The main app handles one active paper at a time.
+- Camera and microphone permissions are required for practice modes.
+- Faster Whisper runs on CPU by default, so first startup/transcription can take time.
+- The spoken viva app depends on `paper_context.json` from the latest uploaded paper.
+- The presentation practice server writes `results.json` relative to its running working directory.
+
+---
+
+## Roadmap Ideas
+
+- Persistent multi-paper knowledge base
+- Exportable presentation deck files
+- Citation extraction and bibliography support
+- In-app voice viva integration
+- Session history persistence
+- Practice recording export
+- Deployment-ready configuration
+- Better calibration controls for camera-based eye contact detection
+
+---
+
+## Author
+
+Developed by Madhu.
+
+Built to help students and researchers understand papers deeply, present them clearly, and defend them with confidence.

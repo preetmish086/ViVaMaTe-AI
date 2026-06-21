@@ -343,6 +343,22 @@ if uploaded and uploaded.name != st.session_state.paper_name:
     with st.spinner("Reading, chunking, and indexing paper..."):
         try:
             text = extract_text_from_pdf(uploaded)
+
+            with open(
+                "paper_context.json",
+                "w",
+                encoding="utf-8"
+            ) as f:
+
+                json.dump(
+                    {
+                        "paper_name": uploaded.name,
+                        "paper_text": text
+                    },
+                    f,
+                    ensure_ascii=False
+                )
+
             chunks = split_text(text)
             index = create_vector_store(chunks, load_embeddings(), uploaded.name)
             st.session_state.paper_context = {

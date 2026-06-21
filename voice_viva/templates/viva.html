@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<title>Voice Viva</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    padding:40px;
+}
+
+button{
+    padding:12px 24px;
+    margin:10px;
+    cursor:pointer;
+}
+
+#question{
+    font-size:24px;
+    margin-bottom:30px;
+}
+
+#transcript{
+    margin-top:30px;
+    padding:20px;
+    background:#1e293b;
+    border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎓 Voice Mock Viva</h1>
+
+<div id="question">
+Loading question...
+</div>
+
+<button onclick="startRecording()">
+
+🎙 Start Answer
+
+</button>
+
+<button onclick="stopRecording()">
+
+⏹ Stop Answer
+
+</button>
+
+<div id="transcript">
+
+Transcript will appear here
+
+</div>
+
+<script>
+
+async function loadQuestion(){
+
+    const response =
+    await fetch(
+        "/generate_question"
+    );
+
+    const data =
+    await response.json();
+
+    document.getElementById(
+        "question"
+    ).innerText =
+    data.question;
+}
+
+loadQuestion();
+
+async function startRecording(){
+
+    await fetch("/start");
+
+    alert(
+        "Recording Started"
+    );
+}
+
+async function stopRecording(){
+
+    const response =
+    await fetch("/stop");
+
+    const data =
+    await response.json();
+
+    document.getElementById(
+        "transcript"
+    ).innerHTML =
+
+    "<h3>Transcript</h3>" +
+    data.transcript +
+
+    "<hr><h3>Evaluation</h3>" +
+    data.evaluation;
+}
+
+</script>
+
+</body>
+</html>

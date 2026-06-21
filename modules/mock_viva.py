@@ -60,10 +60,22 @@ Return only the question.
 
     if st.session_state.viva_question:
 
-        st.info(st.session_state.viva_question)
+        st.markdown("### 🎤 Viva Question")
+
+        st.success(
+            st.session_state.viva_question
+        )
+
+        st.caption(
+            "Future AI voice playback will read this question aloud."
+        )
+
+        if "answer_transcript" not in st.session_state:
+            st.session_state.answer_transcript = ""
 
         answer = st.text_area(
-            "Your Answer",
+            "📝 Answer Transcript",
+            value=st.session_state.answer_transcript,
             height=150
         )
 
